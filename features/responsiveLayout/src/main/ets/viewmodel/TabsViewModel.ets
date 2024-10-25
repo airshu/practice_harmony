@@ -1,5 +1,6 @@
 import { CommonConstants } from '../constants/CommonConstants';
 import { TabBarItem } from './TabBarItem';
+import { ArrayList, HashMap } from '@kit.ArkTS';
 
 /**
  * Binds data to components and provides interfaces.
