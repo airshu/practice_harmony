@@ -7,6 +7,9 @@ import CollectionUtil from '../util/CollectionUtil';
 import AsyncLockUtil from '../util/AsyncLockUtil';
 import ProcessUtil from '../util/ProcessUtil';
 import JSONUtil from '../util/JSONUtil';
+import { notificationManager } from '@kit.NotificationKit';
+import { WantAgent, wantAgent } from '@kit.AbilityKit';
+import { abilityAccessCtrl, bundleManager, common, Permissions } from '@kit.AbilityKit';
 
 @Concurrent
 function printArgs(args: number): number {
@@ -19,7 +22,55 @@ function printArgs(args: number): number {
 @Component
 export struct CatalogueListComponent {
   catalogue: CatalogueItemData[] = [];
+  notificationId: number = 111;
 
+  async getProjectName(): Promise<string> {
+
+
+    let test:string = "{name:'xiaoming' age:10}";
+    let result:object = JSON.parse(test);
+
+    $r("app.string.ability_label");
+    let bundleInfo: bundleManager.BundleInfo = await bundleManager.getBundleInfoForSelf(bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION);
+    bundleInfo.name;
+    return "";
+  }
+
+  async testNotification() {
+    let xxx = await this.getProjectName();
+
+    let wantAgentInfo: wantAgent.WantAgentInfo = {
+      wants: [
+        {
+          bundleName: "com.willshine.practice_harmony",
+          abilityName: "DefaultAbility",
+        }
+      ],
+      operationType: wantAgent.OperationType.START_ABILITY,
+      requestCode: 100
+    };
+
+    let wantAgentObj: WantAgent = await wantAgent.getWantAgent(wantAgentInfo);
+
+    let notificationRequest: notificationManager.NotificationRequest = {
+      id: this.notificationId,
+      content: {
+        notificationContentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+        normal: {
+          title: '录音',
+          text: '正在录音中'
+        },
+      },
+      wantAgent: wantAgentObj,
+      notificationSlotType: notificationManager.SlotType.OTHER_TYPES,
+    };
+    notificationManager.publish(notificationRequest);
+
+  }
+
+  cancelNotification() {
+    notificationManager.cancel(this.notificationId);
+  }
 
   build() {
     Column() {
@@ -29,7 +80,8 @@ export struct CatalogueListComponent {
         emitter.emit('onTest')
         getContext(this).eventHub.emit('onTest1')
         this.getUIContext()
-      }).margin({bottom: 10}).height(50).padding({left: 10, right: 10})
+      }).margin({ bottom: 10 }).height(50).padding({ left: 10, right: 10 })
+
       Button() {
         Text('taskpool').fontColor($r('sys.color.ohos_id_color_text_primary_contrary'))
       }.onClick(() => {
@@ -43,17 +95,27 @@ export struct CatalogueListComponent {
         taskpool.execute(task, taskpool.Priority.HIGH).then((result) => {
           console.info("taskpool 优先级方法 result: " + result);
         });
-      }).margin({bottom: 10}).height(50).padding({left: 10, right: 10})
+      }).margin({ bottom: 10 }).height(50).padding({ left: 10, right: 10 })
 
       Button() {
         Text('测试collection').fontColor($r('sys.color.ohos_id_color_text_primary_contrary'))
       }.onClick(() => {
-        // CollectionUtil.instance.testArray()
-        // CollectionUtil.instance.testMap()
-        // AsyncLockUtil.instance.test();
-        // ProcessUtil.instance.test();
-        JSONUtil.instance.test();
-      }).margin({bottom: 10}).height(50).padding({left: 10, right: 10})
+        this.testNotification()
+      }).margin({ bottom: 10 }).height(50).padding({ left: 10, right: 10 })
+
+      Button() {
+        Text('打开系统通知栏').fontColor($r('sys.color.ohos_id_color_text_primary_contrary'))
+      }.onClick(() => {
+        this.testNotification();
+      }).margin({ bottom: 10 }).height(50).padding({ left: 10, right: 10 })
+
+      Button() {
+        Text('关闭系统通知栏').fontColor($r('sys.color.ohos_id_color_text_primary_contrary'))
+      }.onClick(() => {
+        this.cancelNotification()
+      }).margin({ bottom: 10 }).height(50).padding({ left: 10, right: 10 })
+
+
       GridRow({
         columns: {
           xs: CommonConstants.COLUMN_XS,

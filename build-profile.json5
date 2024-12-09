@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/xpeng/.ohos/config/default_practice_harmony_o6ZofCae-pGJnnAxJcMCPmtsHMuoW7-GXuiyGsRvq9I=.cer",
+          "storePassword": "0000001BAD0FE8D8D560540A32146B839F5F9BD14BBAC5E824C5D74E0E38420B0A28E427BC5B65CB8B7325",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B6D2FE281BC1EB9DF27576218571781D49EF715FA968637852373E2B0C74EB29C37BE5CEFDED14D",
+          "profile": "/Users/xpeng/.ohos/config/default_practice_harmony_o6ZofCae-pGJnnAxJcMCPmtsHMuoW7-GXuiyGsRvq9I=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/xpeng/.ohos/config/default_practice_harmony_o6ZofCae-pGJnnAxJcMCPmtsHMuoW7-GXuiyGsRvq9I=.p12"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",

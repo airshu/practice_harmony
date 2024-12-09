@@ -1,8 +1,10 @@
-import { AbilityConstant, AbilityLifecycleCallback, UIAbility, Want } from '@kit.AbilityKit';
+import { AbilityConstant, AbilityLifecycleCallback, common, UIAbility, Want } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
 import { Logger } from '@ohos/common';
 import { BusinessError, commonEventManager, emitter } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import { pushService } from '@kit.PushKit';
+import { notificationManager } from '@kit.NotificationKit';
 
 const TAG: string = '[LifecycleAbility]';
 const DOMAIN_NUMBER: number = 0xFF00;
@@ -68,7 +70,7 @@ export default class DefaultAbility extends UIAbility {
     hilog.info(DOMAIN_NUMBER, TAG, `register callback number: ${this.lifecycleId}`);
   }
 
-  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+  async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     Logger.info('Ability onCreate');
 
     this.addListener()
@@ -83,6 +85,15 @@ export default class DefaultAbility extends UIAbility {
     this.context.eventHub.on('onTest1', () => {
       Logger.info('subscribe test event: %{public}s');
     });
+
+    try {
+      const pushToken: string = await pushService.getToken();
+      Logger.info('Get push token successfully: ' + pushToken);
+      const context = getContext() as common.UIAbilityContext;
+      notificationManager.requestEnableNotification(context);
+    } catch(e) {
+      Logger.error('Failed to get push token: %{public}s', JSON.stringify(e) ?? '');
+    }
   }
 
   onDestroy(): void {
